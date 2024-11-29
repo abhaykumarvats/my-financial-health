@@ -5,27 +5,35 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import ExploreContainer from "../components/ExploreContainer";
-import "./Tab1.css";
+import Empty from "../components/Empty";
+import { useEffect, useState } from "react";
+import { Preferences } from "@capacitor/preferences";
 
-const Tab1: React.FC = () => {
+export default function Tab1() {
+  const [isEmpty, setIsEmpty] = useState(true);
+
+  useEffect(() => {
+    async function checkEmptyState() {
+      const values = (await Preferences.get({ key: "values" })).value;
+
+      if (!values) {
+        return;
+      }
+
+      setIsEmpty(false);
+    }
+
+    checkEmptyState();
+  }, []);
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Tab 1</IonTitle>
+          <IonTitle>Health</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Tab 1</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <ExploreContainer name="Tab 1 page" />
-      </IonContent>
+      <IonContent fullscreen>{/* isEmpty && */ <Empty />}</IonContent>
     </IonPage>
   );
-};
-
-export default Tab1;
+}
