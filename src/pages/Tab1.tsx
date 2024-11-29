@@ -33,7 +33,7 @@ export default function Tab1() {
           <IonTitle>Health</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>{/* isEmpty && */ <Empty />}</IonContent>
+      <IonContent>{/* isEmpty && */ <Empty />}</IonContent>
     </IonPage>
   );
 }

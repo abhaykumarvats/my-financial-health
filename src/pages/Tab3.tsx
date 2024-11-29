@@ -64,7 +64,7 @@ export default function Tab3() {
           <IonTitle>Me</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent>
         <IonListHeader>Monthly Income*</IonListHeader>
         <IonList inset>
           <IonItem style={{ paddingBottom: "8px" }}>

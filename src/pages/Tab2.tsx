@@ -34,7 +34,7 @@ export default function Tab2() {
           <IonTitle>Knowledge</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
+      <IonContent>
         <IonCard>
           <IonImg
             src="/50-30-20.jpg"
@@ -88,7 +88,7 @@ export default function Tab2() {
 
         <IonContent className="ion-padding">
           <IonImg
-            src="public/50-30-20.jpg"
+            src="/50-30-20.jpg"
             alt="Pie chart showing The 50-30-20 rule"
           ></IonImg>
           <div style={{ lineHeight: 1.5 }}>
