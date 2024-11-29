@@ -9,9 +9,6 @@ import {
   IonContent,
   IonHeader,
   IonImg,
-  IonItem,
-  IonLabel,
-  IonList,
   IonModal,
   IonPage,
   IonTitle,
@@ -40,7 +37,7 @@ export default function Tab2() {
       <IonContent fullscreen>
         <IonCard>
           <IonImg
-            src="public/50-30-20.jpg"
+            src="/50-30-20.jpg"
             alt="Pie chart showing The 50-30-20 rule"
           ></IonImg>
           <IonCardHeader>
@@ -59,7 +56,7 @@ export default function Tab2() {
 
         <IonCard>
           <IonImg
-            src="public/the-bi.jpg"
+            src="/the-bi.jpg"
             alt="An image showing full form of The THE-BI rule as 'Term Insurance, Health Insurance, Emergency Fund - Before Investing'"
           ></IonImg>
           <IonCardHeader>
