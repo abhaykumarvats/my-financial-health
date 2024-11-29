@@ -11,50 +11,29 @@ import {
   IonToast,
   IonToolbar,
 } from "@ionic/react";
-import { useEffect, useState } from "react";
-import { Preferences } from "@capacitor/preferences";
-
-const initialState = {
-  monthlyIncome: "",
-  termInsurancePremium: "",
-  healthInsurancePremium: "",
-  currentSavings: "",
-};
+import { useContext, useState } from "react";
+import { Field, ValuesContext } from "../contexts/ValuesContext";
 
 export default function Tab3() {
-  const [values, setValues] = useState(initialState);
-  const [isSuccessToastOpen, setIsSuccessToastOpen] = useState(false);
-  const [isErrorToastOpen, setIsErrorToastOpen] = useState(false);
+  const { values, updateValues, commitValues } = useContext(ValuesContext);
 
-  useEffect(() => {
-    async function getSavedValues() {
-      const values = (await Preferences.get({ key: "values" })).value;
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
 
-      if (!values) {
-        return;
-      }
-
-      const parsedValues = JSON.parse(values);
-      setValues(parsedValues);
-    }
-
-    getSavedValues();
-  }, []);
-
-  function onFieldChange(e: Event, field: keyof typeof initialState) {
+  function onInput(e: Event, field: Field) {
     const value = (e.target as HTMLIonInputElement).value as string;
     const filteredValue = value.replace(/\D/g, "");
-    setValues({ ...values, [field]: filteredValue });
+    updateValues({ ...values, [field]: filteredValue });
   }
 
   async function onSave() {
     if (values.monthlyIncome.length <= 0) {
-      setIsErrorToastOpen(true);
+      setError(true);
       return;
     }
 
-    await Preferences.set({ key: "values", value: JSON.stringify(values) });
-    setIsSuccessToastOpen(true);
+    await commitValues();
+    setSuccess(true);
   }
 
   return (
@@ -73,7 +52,7 @@ export default function Tab3() {
               placeholder="Enter in digits (e.g. 32000)"
               helperText="*Required. Your take-home monthly income, after taxes."
               value={values.monthlyIncome}
-              onIonInput={(e) => onFieldChange(e, "monthlyIncome")}
+              onIonInput={(e) => onInput(e, "monthlyIncome")}
               clearInput
             ></IonInput>
           </IonItem>
@@ -87,7 +66,7 @@ export default function Tab3() {
               placeholder="Enter in digits (e.g. 32000)"
               helperText="Your monthly term insurance premium. Divide by 12 if you pay yearly. Leave empty if you don't have a term insurance."
               value={values.termInsurancePremium}
-              onIonInput={(e) => onFieldChange(e, "termInsurancePremium")}
+              onIonInput={(e) => onInput(e, "termInsurancePremium")}
               clearInput
             ></IonInput>
           </IonItem>
@@ -101,7 +80,7 @@ export default function Tab3() {
               placeholder="Enter in digits (e.g. 32000)"
               helperText="Your monthly health insurance premium. Divide by 12 if you pay yearly. Leave empty if you don't have a health insurance."
               value={values.healthInsurancePremium}
-              onIonInput={(e) => onFieldChange(e, "healthInsurancePremium")}
+              onIonInput={(e) => onInput(e, "healthInsurancePremium")}
               clearInput
             ></IonInput>
           </IonItem>
@@ -115,7 +94,7 @@ export default function Tab3() {
               placeholder="Enter in digits (e.g. 32000)"
               helperText="Your total cash savings. Includes your emergency fund. Leave empty if you don't have any savings."
               value={values.currentSavings}
-              onIonInput={(e) => onFieldChange(e, "currentSavings")}
+              onIonInput={(e) => onInput(e, "currentSavings")}
               clearInput
             ></IonInput>
           </IonItem>
@@ -126,21 +105,21 @@ export default function Tab3() {
         </IonButton>
 
         <IonToast
-          isOpen={isErrorToastOpen}
+          isOpen={error}
           header="Please fill monthly income."
           duration={3000}
           position="top"
           color="danger"
-          onDidDismiss={() => setIsErrorToastOpen(false)}
+          onDidDismiss={() => setError(false)}
         ></IonToast>
 
         <IonToast
-          isOpen={isSuccessToastOpen}
+          isOpen={success}
           header="Saved. Go to Health tab."
           duration={3000}
           position="top"
           color="dark"
-          onDidDismiss={() => setIsSuccessToastOpen(false)}
+          onDidDismiss={() => setSuccess(false)}
         ></IonToast>
       </IonContent>
     </IonPage>

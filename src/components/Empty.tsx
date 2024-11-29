@@ -1,6 +1,4 @@
-import { Link } from "react-router-dom";
-
-export default function Empty() {
+export function Empty() {
   return (
     <div
       style={{
@@ -23,8 +21,6 @@ export default function Empty() {
         }}
       >
         Go to <strong>Me</strong> tab to get started
-        <br />
-        (This page is under construction)
       </p>
     </div>
   );
