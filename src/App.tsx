@@ -10,10 +10,10 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { home, settings } from "ionicons/icons";
-import { ValuesContextProvider } from "./contexts/data.context";
-import Home from "./pages/home.page";
-import Settings from "./pages/settings.page";
+import { home, personCircle, personOutline } from "ionicons/icons";
+import homePage from "./pages/home.page";
+import profilePage from "./pages/profile.page";
+import incomePage from "./pages/income.page";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -47,37 +47,31 @@ import "./theme/variables.css";
 
 setupIonicReact({ mode: "ios" });
 
-const App: React.FC = () => (
-  <ValuesContextProvider>
+export default function () {
+  return (
     <IonApp>
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
-            <Route exact path="/home">
-              <Home />
-            </Route>
-            <Route path="/settings">
-              <Settings />
-            </Route>
-
-            <Route exact path="/">
-              <Redirect to="/home" />
-            </Route>
+            <Redirect exact path="/" to="/home" />
+            <Route exact path="/home" component={homePage} />
+            <Route exact path="/profile" component={profilePage} />
+            <Route exact path="/profile/income" component={incomePage} />
           </IonRouterOutlet>
+
           <IonTabBar slot="bottom">
             <IonTabButton tab="home" href="/home">
               <IonIcon aria-hidden="true" icon={home} />
               <IonLabel>Home</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="settings" href="/settings">
-              <IonIcon aria-hidden="true" icon={settings} />
-              <IonLabel>Settings</IonLabel>
+
+            <IonTabButton tab="settings" href="/profile">
+              <IonIcon aria-hidden="true" icon={personCircle} />
+              <IonLabel>Profile</IonLabel>
             </IonTabButton>
           </IonTabBar>
         </IonTabs>
       </IonReactRouter>
     </IonApp>
-  </ValuesContextProvider>
-);
-
-export default App;
+  );
+}

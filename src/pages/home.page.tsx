@@ -1,28 +1,5 @@
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-} from "@ionic/react";
-import { Health } from "../components/health.component";
+import PageComponent from "../components/page.component";
 
-export default function Home() {
-  return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Home</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">Home</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <Health />
-      </IonContent>
-    </IonPage>
-  );
+export default function () {
+  return <PageComponent title="Home" />;
 }
