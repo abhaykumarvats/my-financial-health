@@ -12,9 +12,9 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { useContext, useState } from "react";
-import { Field, ValuesContext } from "../contexts/ValuesContext";
+import { Field, ValuesContext } from "../contexts/data.context";
 
-export default function Tab3() {
+export default function Settings() {
   const { values, updateValues, commitValues } = useContext(ValuesContext);
 
   const [success, setSuccess] = useState(false);
@@ -40,10 +40,16 @@ export default function Tab3() {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Me</IonTitle>
+          <IonTitle>Settings</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent fullscreen>
+        <IonHeader collapse="condense">
+          <IonToolbar>
+            <IonTitle size="large">Settings</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+
         <IonListHeader>Monthly Income*</IonListHeader>
         <IonList inset>
           <IonItem style={{ paddingBottom: "8px" }}>
@@ -53,7 +59,6 @@ export default function Tab3() {
               helperText="*Required. Your take-home monthly income, after taxes."
               value={values.monthlyIncome}
               onIonInput={(e) => onInput(e, "monthlyIncome")}
-              clearInput
             ></IonInput>
           </IonItem>
         </IonList>
@@ -67,7 +72,6 @@ export default function Tab3() {
               helperText="Your monthly term insurance premium. Divide by 12 if you pay yearly. Leave empty if you don't have a term insurance."
               value={values.termInsurancePremium}
               onIonInput={(e) => onInput(e, "termInsurancePremium")}
-              clearInput
             ></IonInput>
           </IonItem>
         </IonList>
@@ -81,7 +85,6 @@ export default function Tab3() {
               helperText="Your monthly health insurance premium. Divide by 12 if you pay yearly. Leave empty if you don't have a health insurance."
               value={values.healthInsurancePremium}
               onIonInput={(e) => onInput(e, "healthInsurancePremium")}
-              clearInput
             ></IonInput>
           </IonItem>
         </IonList>
@@ -95,7 +98,6 @@ export default function Tab3() {
               helperText="Your total cash savings. Includes your emergency fund. Leave empty if you don't have any savings."
               value={values.currentSavings}
               onIonInput={(e) => onInput(e, "currentSavings")}
-              clearInput
             ></IonInput>
           </IonItem>
         </IonList>

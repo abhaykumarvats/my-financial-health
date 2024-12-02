@@ -21,9 +21,7 @@ http://ionicframework.com/docs/theming/ */
 }
 
 /* This sets a different item background when dark mode is enabled on ios and md */
-@media (prefers-color-scheme: dark) {
-  :root.ios,
-  :root.md {
-    --ion-item-background: #1c1c1d;
-  }
+.ion-palette-dark.ios,
+.ion-palette-dark.md {
+  --ion-item-background: #1c1c1d;
 }

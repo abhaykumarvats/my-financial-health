@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ValuesContext } from "../contexts/ValuesContext";
+import { ValuesContext } from "../contexts/data.context";
 import {
   IonIcon,
   IonItem,
@@ -7,9 +7,9 @@ import {
   IonList,
   IonListHeader,
 } from "@ionic/react";
-import { Empty } from "./Empty";
-import { useValidations } from "../hooks/useValidations";
+import { useValidations } from "../hooks/hooks";
 import { heart, heartHalf } from "ionicons/icons";
+import { Empty } from "./empty.component";
 
 export function Health() {
   const { values, committed } = useContext(ValuesContext);

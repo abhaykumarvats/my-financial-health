@@ -1,4 +1,4 @@
-import { InitialValues } from "../contexts/ValuesContext";
+import { InitialValues } from "../contexts/data.context";
 
 export function useValidations(values: InitialValues) {
   const alerts = [];
