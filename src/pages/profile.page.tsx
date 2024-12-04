@@ -5,23 +5,11 @@ export default function () {
   return (
     <PageComponent title="Profile">
       <IonList inset>
-        <IonItem routerLink="/profile/income">
-          <IonLabel>Income</IonLabel>
+        <IonItem routerLink="/profile/sources">
+          <IonLabel>Income Sources</IonLabel>
         </IonItem>
-      </IonList>
-
-      <IonList inset>
-        <IonItem>
-          <IonLabel>Term Insurance</IonLabel>
-        </IonItem>
-        <IonItem>
-          <IonLabel>Health Insurance</IonLabel>
-        </IonItem>
-      </IonList>
-
-      <IonList inset>
-        <IonItem>
-          <IonLabel>Savings</IonLabel>
+        <IonItem routerLink="/profile/sinks">
+          <IonLabel>Expense Sinks</IonLabel>
         </IonItem>
       </IonList>
     </PageComponent>

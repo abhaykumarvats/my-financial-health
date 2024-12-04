@@ -1,6 +1,6 @@
 import { Preferences } from "@capacitor/preferences";
 
-type Key = "incomeSources";
+type Key = "sources" | "sinks";
 
 export default function () {
   async function getData(key: Key, defaultValue: any) {

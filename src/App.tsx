@@ -10,10 +10,13 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { home, personCircle, personOutline } from "ionicons/icons";
+import { home, personCircle } from "ionicons/icons";
 import homePage from "./pages/home.page";
 import profilePage from "./pages/profile.page";
-import incomePage from "./pages/income.page";
+import sourcesPage from "./pages/sources.page";
+import sinksPage from "./pages/sinks.page";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./utils/query.utils";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -49,29 +52,32 @@ setupIonicReact({ mode: "ios" });
 
 export default function () {
   return (
-    <IonApp>
-      <IonReactRouter>
-        <IonTabs>
-          <IonRouterOutlet>
-            <Redirect exact path="/" to="/home" />
-            <Route exact path="/home" component={homePage} />
-            <Route exact path="/profile" component={profilePage} />
-            <Route exact path="/profile/income" component={incomePage} />
-          </IonRouterOutlet>
+    <QueryClientProvider client={queryClient}>
+      <IonApp>
+        <IonReactRouter>
+          <IonTabs>
+            <IonRouterOutlet>
+              <Redirect exact path="/" to="/home" />
+              <Route exact path="/home" component={homePage} />
+              <Route exact path="/profile" component={profilePage} />
+              <Route exact path="/profile/sources" component={sourcesPage} />
+              <Route exact path="/profile/sinks" component={sinksPage} />
+            </IonRouterOutlet>
 
-          <IonTabBar slot="bottom">
-            <IonTabButton tab="home" href="/home">
-              <IonIcon aria-hidden="true" icon={home} />
-              <IonLabel>Home</IonLabel>
-            </IonTabButton>
+            <IonTabBar slot="bottom">
+              <IonTabButton tab="home" href="/home">
+                <IonIcon aria-hidden="true" icon={home} />
+                <IonLabel>Home</IonLabel>
+              </IonTabButton>
 
-            <IonTabButton tab="settings" href="/profile">
-              <IonIcon aria-hidden="true" icon={personCircle} />
-              <IonLabel>Profile</IonLabel>
-            </IonTabButton>
-          </IonTabBar>
-        </IonTabs>
-      </IonReactRouter>
-    </IonApp>
+              <IonTabButton tab="settings" href="/profile">
+                <IonIcon aria-hidden="true" icon={personCircle} />
+                <IonLabel>Profile</IonLabel>
+              </IonTabButton>
+            </IonTabBar>
+          </IonTabs>
+        </IonReactRouter>
+      </IonApp>
+    </QueryClientProvider>
   );
 }
