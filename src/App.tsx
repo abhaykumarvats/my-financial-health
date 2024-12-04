@@ -11,12 +11,11 @@ import {
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { home, personCircle } from "ionicons/icons";
-import homePage from "./pages/home.page";
-import profilePage from "./pages/profile.page";
-import sourcesPage from "./pages/sources.page";
-import sinksPage from "./pages/sinks.page";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "./utils/query.utils";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import HomePage from "./pages/home";
+import ProfilePage from "./pages/profile";
+import SourcesPage from "./pages/sources";
+import SinksPage from "./pages/sinks";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -48,9 +47,12 @@ import "@ionic/react/css/palettes/dark.class.css";
 /* Theme variables */
 import "./theme/variables.css";
 
+/* Setup */
 setupIonicReact({ mode: "ios" });
 
-export default function () {
+const queryClient = new QueryClient();
+
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <IonApp>
@@ -58,10 +60,10 @@ export default function () {
           <IonTabs>
             <IonRouterOutlet>
               <Redirect exact path="/" to="/home" />
-              <Route exact path="/home" component={homePage} />
-              <Route exact path="/profile" component={profilePage} />
-              <Route exact path="/profile/sources" component={sourcesPage} />
-              <Route exact path="/profile/sinks" component={sinksPage} />
+              <Route exact path="/home" component={HomePage} />
+              <Route exact path="/profile" component={ProfilePage} />
+              <Route exact path="/profile/sources" component={SourcesPage} />
+              <Route exact path="/profile/sinks" component={SinksPage} />
             </IonRouterOutlet>
 
             <IonTabBar slot="bottom">

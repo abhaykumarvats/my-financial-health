@@ -1,9 +1,9 @@
 import { IonItem, IonLabel, IonList } from "@ionic/react";
-import PageComponent from "../components/page.component";
+import Page from "../components/page";
 
-export default function () {
+export default function ProfilePage() {
   return (
-    <PageComponent title="Profile">
+    <Page title="Profile">
       <IonList inset>
         <IonItem routerLink="/profile/sources">
           <IonLabel>Income Sources</IonLabel>
@@ -12,6 +12,6 @@ export default function () {
           <IonLabel>Expense Sinks</IonLabel>
         </IonItem>
       </IonList>
-    </PageComponent>
+    </Page>
   );
 }

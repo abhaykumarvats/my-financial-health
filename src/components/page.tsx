@@ -7,7 +7,7 @@ import {
 } from "@ionic/react";
 import React from "react";
 
-export default function ({
+export default function Page({
   title,
   children,
 }: React.PropsWithChildren<{

@@ -1,18 +1,10 @@
 import { IonAlert, IonIcon, IonItem, IonLabel, IonList } from "@ionic/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { addCircleOutline } from "ionicons/icons";
-import useDataHook from "../hooks/use-data.hook";
 
-export default function () {
-  const { getData, setData } = useDataHook();
+export default function AddSink() {
   const [showAlert, setShowAlert] = useState(false);
   const [sinks, setSinks] = useState<string[]>([]);
-
-  useEffect(() => {
-    (async () => {
-      setSinks(await getData("sinks", []));
-    })();
-  }, []);
 
   return (
     <>
@@ -63,8 +55,6 @@ export default function () {
 
           const newSinks = [...sinks, name];
           setSinks(newSinks);
-
-          setData("sinks", newSinks);
         }}
       />
     </>
