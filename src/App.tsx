@@ -1,4 +1,3 @@
-import { Redirect, Route } from "react-router-dom";
 import {
   IonApp,
   IonIcon,
@@ -10,12 +9,14 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { home, personCircle } from "ionicons/icons";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import HomePage from "./pages/home";
-import ProfilePage from "./pages/profile";
-import SourcesPage from "./pages/sources";
-import SinksPage from "./pages/sinks";
+import { documentText, home, personCircle } from "ionicons/icons";
+import { Redirect, Route } from "react-router-dom";
+import HomePage from "./pages/home-page";
+import LedgerPage from "./pages/ledger-page";
+import ProfilePage from "./pages/profile-page";
+import SinksPage from "./pages/sinks-page";
+import SourcesPage from "./pages/sources-page";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -49,7 +50,6 @@ import "./theme/variables.css";
 
 /* Setup */
 setupIonicReact({ mode: "ios" });
-
 const queryClient = new QueryClient();
 
 export default function App() {
@@ -60,6 +60,7 @@ export default function App() {
           <IonTabs>
             <IonRouterOutlet>
               <Redirect exact path="/" to="/home" />
+              <Route exact path="/ledger" component={LedgerPage} />
               <Route exact path="/home" component={HomePage} />
               <Route exact path="/profile" component={ProfilePage} />
               <Route exact path="/profile/sources" component={SourcesPage} />
@@ -67,11 +68,14 @@ export default function App() {
             </IonRouterOutlet>
 
             <IonTabBar slot="bottom">
+              <IonTabButton tab="ledger" href="/ledger">
+                <IonIcon aria-hidden="true" icon={documentText} />
+                <IonLabel>Ledger</IonLabel>
+              </IonTabButton>
               <IonTabButton tab="home" href="/home">
                 <IonIcon aria-hidden="true" icon={home} />
                 <IonLabel>Home</IonLabel>
               </IonTabButton>
-
               <IonTabButton tab="settings" href="/profile">
                 <IonIcon aria-hidden="true" icon={personCircle} />
                 <IonLabel>Profile</IonLabel>

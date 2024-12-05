@@ -3,7 +3,7 @@ import { collectionIds, queryKeys } from "../utils/constants";
 import { IDocument } from "../utils/types";
 import { db } from "../utils/appwrite";
 
-export default function useReactQuery(queryKey: keyof typeof queryKeys) {
+export default function useQueryState(queryKey: keyof typeof queryKeys) {
   /* Query */
   const query = useQuery({
     queryKey: [queryKeys[queryKey]],

@@ -1,4 +1,5 @@
 import { IonItem, IonLabel, IonList } from "@ionic/react";
+
 import Page from "../components/page";
 
 export default function ProfilePage() {
