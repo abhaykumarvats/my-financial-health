@@ -39,19 +39,19 @@ export type Database = {
           created_at: string;
           id: number;
           name: string;
-          type: string;
+          type: Database["public"]["Enums"]["transaction_type"];
         };
         Insert: {
           created_at?: string;
           id?: number;
           name: string;
-          type: string;
+          type: Database["public"]["Enums"]["transaction_type"];
         };
         Update: {
           created_at?: string;
           id?: number;
           name?: string;
-          type?: string;
+          type?: Database["public"]["Enums"]["transaction_type"];
         };
         Relationships: [];
       };
@@ -62,11 +62,13 @@ export type Database = {
           created_at: string;
           date: string;
           description: string | null;
-          expense_type: string | null;
+          expense_type: Database["public"]["Enums"]["expense_type"] | null;
           id: number;
           recurring: boolean;
-          recurring_frequency: string | null;
-          type: string;
+          recurring_frequency:
+            | Database["public"]["Enums"]["recurring_frequency"]
+            | null;
+          type: Database["public"]["Enums"]["transaction_type"];
         };
         Insert: {
           amount: number;
@@ -74,11 +76,13 @@ export type Database = {
           created_at?: string;
           date: string;
           description?: string | null;
-          expense_type?: string | null;
+          expense_type?: Database["public"]["Enums"]["expense_type"] | null;
           id?: number;
           recurring?: boolean;
-          recurring_frequency?: string | null;
-          type: string;
+          recurring_frequency?:
+            | Database["public"]["Enums"]["recurring_frequency"]
+            | null;
+          type: Database["public"]["Enums"]["transaction_type"];
         };
         Update: {
           amount?: number;
@@ -86,11 +90,13 @@ export type Database = {
           created_at?: string;
           date?: string;
           description?: string | null;
-          expense_type?: string | null;
+          expense_type?: Database["public"]["Enums"]["expense_type"] | null;
           id?: number;
           recurring?: boolean;
-          recurring_frequency?: string | null;
-          type?: string;
+          recurring_frequency?:
+            | Database["public"]["Enums"]["recurring_frequency"]
+            | null;
+          type?: Database["public"]["Enums"]["transaction_type"];
         };
         Relationships: [
           {
@@ -110,7 +116,9 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
-      [_ in never]: never;
+      expense_type: "need" | "want";
+      recurring_frequency: "monthly" | "yearly";
+      transaction_type: "income" | "expense";
     };
     CompositeTypes: {
       [_ in never]: never;

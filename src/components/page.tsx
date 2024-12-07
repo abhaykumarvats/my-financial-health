@@ -20,7 +20,7 @@ export default function Page({
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton></IonBackButton>
+            <IonBackButton />
           </IonButtons>
           <IonTitle>{title}</IonTitle>
         </IonToolbar>
