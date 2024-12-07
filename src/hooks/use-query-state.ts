@@ -1,31 +1,53 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { collectionIds, queryKeys } from "../utils/constants";
-import { IDocument } from "../utils/types";
-import { db } from "../utils/appwrite";
+import { queryKeys } from "../utils/constants";
+import { supabase } from "../utils/supabase";
+import { useIonLoading } from "@ionic/react";
+import { TablesInsert } from "../utils/types/database";
+
+type TablesInsertQueryKeys = TablesInsert<keyof typeof queryKeys>;
+type IMutationFn = { data: TablesInsertQueryKeys; callback?: () => void };
+
+async function queryFunction(tableName: keyof typeof queryKeys) {
+  const { data, error } = await supabase.from(tableName).select("*");
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+async function mutationFunction(
+  tableName: keyof typeof queryKeys,
+  data: TablesInsertQueryKeys
+) {
+  const { error } = await supabase.from(tableName).insert(data);
+  if (error) throw new Error(error.message);
+}
 
 export default function useQueryState(queryKey: keyof typeof queryKeys) {
-  /* Query */
-  const query = useQuery({
-    queryKey: [queryKeys[queryKey]],
-    queryFn: () => db.listDocuments(collectionIds[queryKey]),
-  });
-
-  const documents = query.data?.documents ?? [];
-
-  /* Mutation */
+  const [presentLoader, dismissLoader] = useIonLoading();
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationFn: (data: IDocument) =>
-      db.createDocument(collectionIds[queryKey], data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [queryKeys[queryKey]] });
-    },
+  const tableName = queryKeys[queryKey];
+
+  /* Query */
+  const { data = [] } = useQuery({
+    queryKey: [tableName],
+    queryFn: () => queryFunction(tableName),
   });
 
-  function createDocument(data: IDocument) {
-    mutation.mutate(data);
+  /* Mutation */
+  const mutation = useMutation({
+    mutationFn: async ({ data, callback }: IMutationFn) => {
+      presentLoader({ message: "Saving..." });
+      await mutationFunction(tableName, data);
+      dismissLoader();
+      callback?.();
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: [tableName] }),
+  });
+
+  /* Custom */
+  function create(params: IMutationFn) {
+    mutation.mutate(params);
   }
 
-  return { documents, createDocument };
+  return { data, create };
 }

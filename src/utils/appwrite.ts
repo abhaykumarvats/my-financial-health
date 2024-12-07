@@ -1,24 +1,8 @@
-import { Client, Databases, ID } from "appwrite";
-import { databaseId, projectId } from "./constants";
-import { IDocument } from "./types";
+import { Client, Databases } from "appwrite";
+import { projectId } from "./constants";
 
 const client = new Client();
 
 client.setEndpoint("https://cloud.appwrite.io/v1").setProject(projectId);
 
-const databases = new Databases(client);
-
-export const db = {
-  async listDocuments(collectionId: string) {
-    return await databases.listDocuments(databaseId, collectionId);
-  },
-
-  async createDocument(collectionId: string, data: IDocument) {
-    return await databases.createDocument(
-      databaseId,
-      collectionId,
-      ID.unique(),
-      data
-    );
-  },
-};
+export const db = new Databases(client);

@@ -6,6 +6,7 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
+  isPlatform,
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
@@ -58,7 +59,7 @@ export default function App() {
       <IonApp>
         <IonReactRouter>
           <IonTabs>
-            <IonRouterOutlet>
+            <IonRouterOutlet animated={!isPlatform("mobileweb")}>
               <Redirect exact path="/" to="/home" />
               <Route exact path="/ledger" component={LedgerPage} />
               <Route exact path="/home" component={HomePage} />

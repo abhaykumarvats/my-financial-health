@@ -2,10 +2,14 @@ import AddButton from "../components/add-button";
 import Page from "../components/page";
 import useQueryState from "../hooks/use-query-state";
 import { IonItem, IonLabel, IonList, useIonAlert } from "@ionic/react";
+import { Tables } from "../utils/types/database";
 
 export default function SinksPage() {
   const [presentAlert] = useIonAlert();
-  const { documents: sinks, createDocument } = useQueryState("sinks");
+  const data = useQueryState("categories").data as Array<Tables<"categories">>;
+  const createCategory = useQueryState("categories").create;
+
+  const categories = data.filter((item) => item.type === "expense");
 
   return (
     <Page title="Expense Sinks">
@@ -25,7 +29,7 @@ export default function SinksPage() {
                 return;
               }
 
-              createDocument({ name });
+              createCategory({ type: "expense", name });
             },
           })
         }
@@ -34,7 +38,7 @@ export default function SinksPage() {
       </AddButton>
 
       <IonList inset>
-        {sinks.map(({ name }) => (
+        {categories.map(({ name }) => (
           <IonItem key={name}>
             <IonLabel>{name}</IonLabel>
           </IonItem>

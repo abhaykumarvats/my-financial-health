@@ -1,10 +1,11 @@
-import { IonItem, IonLabel, IonList } from "@ionic/react";
+import { IonItem, IonLabel, IonList, IonListHeader } from "@ionic/react";
 
 import Page from "../components/page";
 
 export default function ProfilePage() {
   return (
     <Page title="Profile">
+      <IonListHeader>Categories</IonListHeader>
       <IonList inset>
         <IonItem routerLink="/profile/sources">
           <IonLabel>Income Sources</IonLabel>

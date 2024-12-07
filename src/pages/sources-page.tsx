@@ -2,10 +2,14 @@ import { IonItem, IonLabel, IonList, useIonAlert } from "@ionic/react";
 import Page from "../components/page";
 import useQueryState from "../hooks/use-query-state";
 import AddButton from "../components/add-button";
+import { Tables } from "../utils/types/database";
 
 export default function SourcesPage() {
   const [presentAlert] = useIonAlert();
-  const { documents: sources, createDocument } = useQueryState("sources");
+  const data = useQueryState("categories").data as Array<Tables<"categories">>;
+  const createCategory = useQueryState("categories").create;
+
+  const categories = data.filter((item) => item.type === "income");
 
   return (
     <Page title="Income Sources">
@@ -25,7 +29,7 @@ export default function SourcesPage() {
                 return;
               }
 
-              createDocument({ name });
+              createCategory({ type: "income", name });
             },
           })
         }
@@ -34,7 +38,7 @@ export default function SourcesPage() {
       </AddButton>
 
       <IonList inset>
-        {sources.map(({ name }) => (
+        {categories.map(({ name }) => (
           <IonItem key={name}>
             <IonLabel>{name}</IonLabel>
           </IonItem>

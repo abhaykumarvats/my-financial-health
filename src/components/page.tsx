@@ -1,4 +1,6 @@
 import {
+  IonBackButton,
+  IonButtons,
   IonContent,
   IonHeader,
   IonPage,
@@ -17,19 +19,14 @@ export default function Page({
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton></IonBackButton>
+          </IonButtons>
           <IonTitle>{title}</IonTitle>
         </IonToolbar>
       </IonHeader>
 
-      <IonContent fullscreen>
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">{title}</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-
-        {children}
-      </IonContent>
+      <IonContent>{children}</IonContent>
     </IonPage>
   );
 }
