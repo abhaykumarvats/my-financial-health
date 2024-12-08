@@ -22,7 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useQueryState from "../hooks/use-query-state";
 import { Tables } from "../utils/types/database";
 
-export type ICreateTransaction = { dismissModal?: () => void };
+export type ICreateTransactionPage = { dismissModal?: () => void };
 
 const formSchema = z.object({
   category_id: z.number(),
@@ -35,9 +35,9 @@ const formSchema = z.object({
   description: z.string().optional(),
 });
 
-export default function CreateTransaction({
+export default function CreateTransactionPage({
   dismissModal,
-}: ICreateTransaction) {
+}: ICreateTransactionPage) {
   const {
     formState: { errors },
     watch,

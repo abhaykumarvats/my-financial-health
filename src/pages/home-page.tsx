@@ -19,7 +19,9 @@ import SettingsPage, { ISettingsPage } from "./settings-page";
 import useQueryState from "../hooks/use-query-state";
 import { useRef } from "react";
 import { Tables } from "../utils/types/database";
-import CreateTransaction, { ICreateTransaction } from "./create-transaction";
+import CreateTransactionPage, {
+  ICreateTransactionPage,
+} from "./create-transaction-page";
 
 export default function HomePage() {
   // Preload data
@@ -35,9 +37,9 @@ export default function HomePage() {
   );
 
   const [presentCreateTransactionModal, dismissCreateTransactionModal] =
-    useIonModal(CreateTransaction, {
+    useIonModal(CreateTransactionPage, {
       dismissModal: () => dismissCreateTransactionModal(),
-    } as ICreateTransaction);
+    } as ICreateTransactionPage);
 
   const pageRef = useRef(null);
 

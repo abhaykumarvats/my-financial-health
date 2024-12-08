@@ -8,6 +8,7 @@ import {
 import { IonReactRouter } from "@ionic/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Redirect, Route } from "react-router-dom";
+import SessionPage from "./pages/session-page";
 import HomePage from "./pages/home-page";
 
 /* Core CSS required for Ionic components to work properly */
@@ -39,6 +40,7 @@ import "@ionic/react/css/palettes/dark.class.css";
 
 /* Theme variables */
 import "./theme/variables.css";
+import ProtectedRoute from "./components/protected-route";
 
 /* Setup */
 setupIonicReact({ mode: "ios" });
@@ -51,8 +53,13 @@ export default function App() {
         <IonReactRouter>
           <IonTabs>
             <IonRouterOutlet animated={!isPlatform("mobileweb")}>
-              <Redirect exact path="/" to="/home" />
-              <Route exact path="/home" component={HomePage} />
+              <Route exact path="/">
+                <Redirect to="/home" />
+              </Route>
+
+              <Route exact path="/session" component={SessionPage} />
+
+              <ProtectedRoute exact path="/home" component={HomePage} />
             </IonRouterOutlet>
           </IonTabs>
         </IonReactRouter>

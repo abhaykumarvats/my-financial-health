@@ -13,10 +13,13 @@ import {
   IonTitle,
   IonToolbar,
   useIonAlert,
+  useIonLoading,
+  useIonRouter,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import useQueryState from "../hooks/use-query-state";
 import { Tables } from "../utils/types/database";
+import useSession from "../hooks/use-session";
 
 export type ISettingsPage = {
   dismissModal?: () => void;
@@ -24,11 +27,15 @@ export type ISettingsPage = {
 
 export default function SettingsPage({ dismissModal }: ISettingsPage) {
   const [presentAlert] = useIonAlert();
+  const [presentLoader, dismissLoader] = useIonLoading();
+  const router = useIonRouter();
 
+  const logout = useSession().logout;
+
+  const createCategory = useQueryState("categories").create;
   const categories = useQueryState("categories").data as Array<
     Tables<"categories">
   >;
-  const createCategory = useQueryState("categories").create;
 
   const incomeCategories = categories.filter((item) => item.type === "income");
   const expenseCategories = categories.filter(
@@ -39,12 +46,31 @@ export default function SettingsPage({ dismissModal }: ISettingsPage) {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonButton
+              color="danger"
+              onClick={async () => {
+                presentLoader({ message: "Logging out..." });
+
+                const { error } = await logout();
+
+                dismissLoader();
+
+                if (!error) {
+                  dismissModal?.();
+                  router.push("/");
+                }
+              }}
+            >
+              Logout
+            </IonButton>
+          </IonButtons>
+          <IonTitle>Settings</IonTitle>
           {dismissModal && (
             <IonButtons slot="end">
               <IonButton onClick={() => dismissModal()}>Done</IonButton>
             </IonButtons>
           )}
-          <IonTitle>Settings</IonTitle>
         </IonToolbar>
       </IonHeader>
 
