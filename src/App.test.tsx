@@ -1,7 +1,6 @@
 import { render } from "@testing-library/react";
-import React from "react";
 
-import App from "./app";
+import App from "./App";
 
 test("renders without crashing", () => {
   const { baseElement } = render(<App />);
