@@ -6,7 +6,6 @@ import {
   IonHeader,
   IonInput,
   IonItem,
-  IonLabel,
   IonList,
   IonNote,
   IonPage,
@@ -15,16 +14,15 @@ import {
   IonTitle,
   IonToggle,
   IonToolbar,
-  useIonModal,
 } from "@ionic/react";
-import AddButton from "../components/add-button";
-import Page from "../components/page";
 import { useForm } from "react-hook-form";
 import { useId } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useQueryState from "../hooks/use-query-state";
 import { Tables } from "../utils/types/database";
+
+export type ICreateTransaction = { dismissModal?: () => void };
 
 const formSchema = z.object({
   category_id: z.number(),
@@ -37,63 +35,38 @@ const formSchema = z.object({
   description: z.string().optional(),
 });
 
-type ICreateTransactionModal = { dismiss: () => void };
-type IFormSchema = z.infer<typeof formSchema>;
-
-export default function LedgerPage() {
-  const [presentModal, dismissModal] = useIonModal(CreateTransactionModal, {
-    dismiss: () => dismissModal(),
-  } as ICreateTransactionModal);
-
-  const transactions = useQueryState("transactions").data as Array<
-    Tables<"transactions">
-  >;
-
-  return (
-    <Page title="Ledger">
-      <AddButton onClick={presentModal}>Create New Transaction</AddButton>
-      {transactions.length > 0 && (
-        <IonList inset>
-          {transactions.map(({ id, type, amount }) => (
-            <IonItem key={id}>
-              <IonLabel>{type}</IonLabel>
-              <IonNote>{(amount / 100).toFixed(2)}</IonNote>
-            </IonItem>
-          ))}
-        </IonList>
-      )}
-    </Page>
-  );
-}
-
-function CreateTransactionModal({ dismiss }: ICreateTransactionModal) {
+export default function CreateTransaction({
+  dismissModal,
+}: ICreateTransaction) {
   const {
     formState: { errors },
     watch,
     setValue,
+    setError,
     resetField,
     handleSubmit,
-  } = useForm<IFormSchema>({
+  } = useForm<z.infer<typeof formSchema>>({
+    mode: "onChange",
     resolver: zodResolver(formSchema),
     defaultValues: { date: new Date().toISOString() },
   });
 
-  console.log({ errors });
+  const data = useQueryState("categories").data as Array<Tables<"categories">>;
+  const createTransaction = useQueryState("transactions").create;
 
   const formId = useId();
 
   const type = watch("type");
-  const data = useQueryState("categories").data as Array<Tables<"categories">>;
   const categories = data.filter((item) => item.type === type);
 
-  const createTransaction = useQueryState("transactions").create;
+  console.log({ errors });
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton onClick={dismiss}>Cancel</IonButton>
+            <IonButton onClick={dismissModal}>Cancel</IonButton>
           </IonButtons>
 
           <IonTitle>New Transaction</IonTitle>
@@ -110,12 +83,28 @@ function CreateTransactionModal({ dismiss }: ICreateTransactionModal) {
         <form
           id={formId}
           onSubmit={handleSubmit((values: z.infer<typeof formSchema>) => {
+            let error = false;
+
+            if (values.type === "expense" && !values.expense_type) {
+              error = true;
+              setError("expense_type", { type: "expense_type" });
+            }
+
+            if (values.recurring && !values.recurring_frequency) {
+              error = true;
+              setError("recurring_frequency", { type: "recurring_frequency" });
+            }
+
+            if (error) {
+              return;
+            }
+
             createTransaction({
               data: {
                 ...values,
                 amount: values.amount * 100,
               },
-              callback: dismiss,
+              callback: dismissModal,
             });
           })}
         >
@@ -133,11 +122,11 @@ function CreateTransactionModal({ dismiss }: ICreateTransactionModal) {
           </IonList>
 
           <IonList inset>
-            <IonItem>
+            <IonItem color={errors.type && "danger"}>
               <IonSelect
                 label="Transaction Type"
                 interface="action-sheet"
-                placeholder="Select"
+                placeholder="Required"
                 onIonChange={({ detail }) => {
                   setValue("type", detail.value);
                   resetField("expense_type");
@@ -150,11 +139,11 @@ function CreateTransactionModal({ dismiss }: ICreateTransactionModal) {
             </IonItem>
 
             {type === "expense" && (
-              <IonItem>
+              <IonItem color={errors.expense_type && "danger"}>
                 <IonSelect
                   label="Expense Type"
                   interface="action-sheet"
-                  placeholder="Select"
+                  placeholder="Required"
                   onIonChange={({ detail }) =>
                     setValue("expense_type", detail.value)
                   }
@@ -166,11 +155,11 @@ function CreateTransactionModal({ dismiss }: ICreateTransactionModal) {
             )}
 
             {type && (
-              <IonItem>
+              <IonItem color={errors.category_id && "danger"}>
                 <IonSelect
                   label="Category"
                   interface="action-sheet"
-                  placeholder="Select"
+                  placeholder="Required"
                   value={watch("category_id")}
                   onIonChange={({ detail }) =>
                     setValue("category_id", detail.value)
@@ -184,6 +173,26 @@ function CreateTransactionModal({ dismiss }: ICreateTransactionModal) {
                 </IonSelect>
               </IonItem>
             )}
+
+            <IonItem color={errors.amount && "danger"}>
+              <IonInput
+                type="number"
+                label="Amount"
+                placeholder="Required"
+                inputMode="decimal"
+                onIonInput={(e) => setValue("amount", e.target.value as number)}
+              />
+            </IonItem>
+
+            <IonItem>
+              <IonInput
+                label="Description"
+                placeholder="Optional"
+                onIonInput={(e) =>
+                  setValue("description", e.target.value as string)
+                }
+              />
+            </IonItem>
           </IonList>
 
           <IonList inset>
@@ -199,11 +208,11 @@ function CreateTransactionModal({ dismiss }: ICreateTransactionModal) {
             </IonItem>
 
             {watch("recurring") && (
-              <IonItem>
+              <IonItem color={errors.recurring_frequency && "danger"}>
                 <IonSelect
                   label="Recurring Frequency"
                   interface="action-sheet"
-                  placeholder="Select"
+                  placeholder="Required"
                   onIonChange={({ detail }) =>
                     setValue("recurring_frequency", detail.value)
                   }
@@ -213,27 +222,6 @@ function CreateTransactionModal({ dismiss }: ICreateTransactionModal) {
                 </IonSelect>
               </IonItem>
             )}
-          </IonList>
-
-          <IonList inset>
-            <IonItem>
-              <IonInput
-                type="number"
-                label="Amount"
-                placeholder="Required"
-                inputMode="decimal"
-                onIonInput={(e) => setValue("amount", e.target.value as number)}
-              />
-            </IonItem>
-            <IonItem>
-              <IonInput
-                label="Description"
-                placeholder="Optional"
-                onIonInput={(e) =>
-                  setValue("description", e.target.value as string)
-                }
-              />
-            </IonItem>
           </IonList>
         </form>
       </IonContent>

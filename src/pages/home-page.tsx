@@ -4,25 +4,42 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonListHeader,
+  IonNote,
   IonPage,
   IonTitle,
   IonToolbar,
   useIonModal,
 } from "@ionic/react";
-import { settingsOutline } from "ionicons/icons";
+import { add, settingsOutline } from "ionicons/icons";
 import SettingsPage, { ISettingsPage } from "./settings-page";
 import useQueryState from "../hooks/use-query-state";
 import { useRef } from "react";
+import { Tables } from "../utils/types/database";
+import CreateTransaction, { ICreateTransaction } from "./create-transaction";
 
 export default function HomePage() {
+  // Preload data
+  useQueryState("categories");
+
+  const transactions = useQueryState("transactions").data as Array<
+    Tables<"transactions">
+  >;
+
   const [presentSettingsModal, dismissSettingsModal] = useIonModal(
     SettingsPage,
     { dismissModal: () => dismissSettingsModal() } as ISettingsPage
   );
 
-  const pageRef = useRef(null);
+  const [presentCreateTransactionModal, dismissCreateTransactionModal] =
+    useIonModal(CreateTransaction, {
+      dismissModal: () => dismissCreateTransactionModal(),
+    } as ICreateTransaction);
 
-  useQueryState("categories");
+  const pageRef = useRef(null);
 
   return (
     <IonPage ref={pageRef}>
@@ -41,7 +58,35 @@ export default function HomePage() {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent></IonContent>
+      <IonContent>
+        <IonListHeader>
+          <IonLabel>Ledger</IonLabel>
+          <IonButton
+            onClick={() =>
+              presentCreateTransactionModal({
+                presentingElement: pageRef.current!,
+              })
+            }
+          >
+            <IonIcon slot="start" icon={add} /> Add Transaction
+          </IonButton>
+        </IonListHeader>
+
+        {!transactions.length ? (
+          <IonNote className="ion-margin-horizontal">
+            No transactions found
+          </IonNote>
+        ) : (
+          <IonList inset>
+            {transactions.map(({ id, type, amount }) => (
+              <IonItem key={id}>
+                <IonLabel>{type}</IonLabel>
+                <IonNote>{(amount / 100).toFixed(2)}</IonNote>
+              </IonItem>
+            ))}
+          </IonList>
+        )}
+      </IonContent>
     </IonPage>
   );
 }
