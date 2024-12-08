@@ -59,8 +59,6 @@ export default function CreateTransaction({
   const type = watch("type");
   const categories = data.filter((item) => item.type === type);
 
-  console.log({ errors });
-
   return (
     <IonPage>
       <IonHeader>
