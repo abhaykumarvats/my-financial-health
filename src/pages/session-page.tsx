@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   IonButton,
   IonContent,
+  IonFooter,
   IonHeader,
   IonInput,
   IonInputPasswordToggle,
@@ -20,8 +21,8 @@ import {
 } from "@ionic/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
-import useSession from "../hooks/use-session";
+import { useId, useState } from "react";
+import { supabase } from "../utils/supabase";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -29,7 +30,7 @@ const formSchema = z.object({
   confirm_password: z.string().optional(),
 });
 
-export default function LoginPage() {
+export default function SessionPage() {
   const {
     formState: { errors },
     setValue,
@@ -43,9 +44,76 @@ export default function LoginPage() {
   const [presentLoader, dismissLoader] = useIonLoading();
   const [presentToast] = useIonToast();
 
-  const { register, login } = useSession();
-
   const [mode, setMode] = useState<"register" | "login">("login");
+  const formId = useId();
+
+  async function register(
+    email: string,
+    password: string,
+    confirm_password?: string
+  ) {
+    if (password !== confirm_password) {
+      setError("confirm_password", {
+        type: "custom",
+        message: "Passwords don't match",
+      });
+
+      return;
+    }
+
+    presentLoader({ message: "Registering..." });
+
+    const { data, error } = await supabase.auth.signUp({ email, password });
+
+    dismissLoader();
+
+    if (error) {
+      presentToast({
+        message: error.message,
+        position: "top",
+        color: "danger",
+        duration: 5000,
+      });
+
+      return;
+    }
+
+    if (data.user) {
+      presentToast({
+        header: "Registration Successful",
+        message: "Please check your email for verification link.",
+        position: "top",
+        color: "dark",
+        duration: 5000,
+      });
+    }
+  }
+
+  async function login(email: string, password: string) {
+    presentLoader({ message: "Logging in..." });
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    dismissLoader();
+
+    if (error) {
+      presentToast({
+        message: error.message,
+        position: "top",
+        color: "danger",
+        duration: 5000,
+      });
+
+      return;
+    }
+
+    if (data.session) {
+      router.push("/");
+    }
+  }
 
   return (
     <IonPage>
@@ -55,84 +123,20 @@ export default function LoginPage() {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent>
+      <IonContent className="ion-padding-vertical">
         <form
-          style={{
-            height: "100%",
-            flexDirection: "column",
-            display: "flex",
-            justifyContent: "center",
-          }}
-          onSubmit={handleSubmit(
-            async ({
-              email,
-              password,
-              confirm_password,
-            }: z.infer<typeof formSchema>) => {
-              if (mode === "login") {
-                presentLoader({ message: "Logging in..." });
+          id={formId}
+          onSubmit={handleSubmit((values: z.infer<typeof formSchema>) => {
+            const { email, password, confirm_password } = values;
 
-                const { data, error } = await login(email, password);
-
-                dismissLoader();
-
-                if (error) {
-                  presentToast({
-                    message: error.message,
-                    position: "top",
-                    color: "danger",
-                    duration: 5000,
-                  });
-
-                  return;
-                }
-
-                if (data.session) {
-                  router.push("/");
-                }
-              } else if (mode === "register") {
-                if (password !== confirm_password) {
-                  setError("confirm_password", {
-                    type: "custom",
-                    message: "Passwords don't match",
-                  });
-
-                  return;
-                }
-
-                presentLoader({ message: "Registering..." });
-
-                const { data, error } = await register(email, password);
-
-                dismissLoader();
-
-                if (error) {
-                  presentToast({
-                    message: error.message,
-                    position: "top",
-                    color: "danger",
-                    duration: 5000,
-                  });
-
-                  return;
-                }
-
-                if (data.user) {
-                  setMode("login");
-
-                  presentToast({
-                    header: "Registration Successful",
-                    message: "Please check your email for verification link.",
-                    position: "top",
-                    color: "dark",
-                    duration: 5000,
-                  });
-                }
-              }
+            if (mode === "login") {
+              login(email, password);
+            } else if (mode === "register") {
+              register(email, password, confirm_password);
             }
-          )}
+          })}
         >
-          <div className="ion-padding-horizontal">
+          <div className="ion-margin-horizontal">
             <IonSegment value={mode}>
               <IonSegmentButton value="login" onClick={() => setMode("login")}>
                 <IonLabel>Login</IonLabel>
@@ -150,8 +154,7 @@ export default function LoginPage() {
             <IonItem color={errors.email && "danger"}>
               <IonInput
                 type="email"
-                label="Email"
-                placeholder="Required"
+                placeholder="Email"
                 onIonChange={(e) => setValue("email", e.target.value as string)}
               />
             </IonItem>
@@ -159,8 +162,7 @@ export default function LoginPage() {
             <IonItem color={errors.password && "danger"}>
               <IonInput
                 type="password"
-                label="Password"
-                placeholder="Required"
+                placeholder="Password"
                 onIonChange={(e) =>
                   setValue("password", e.target.value as string)
                 }
@@ -173,8 +175,7 @@ export default function LoginPage() {
               <IonItem color={errors.confirm_password && "danger"}>
                 <IonInput
                   type="password"
-                  label="Confirm Password"
-                  placeholder="Required"
+                  placeholder="Confirm Password"
                   onIonChange={(e) =>
                     setValue("confirm_password", e.target.value as string)
                   }
@@ -190,12 +191,19 @@ export default function LoginPage() {
               {errors.confirm_password.message}
             </IonNote>
           )}
-
-          <IonButton className="ion-margin" type="submit" expand="block">
-            {mode === "login" ? "Login" : "Register"}
-          </IonButton>
         </form>
       </IonContent>
+
+      <IonFooter>
+        <IonButton
+          className="ion-margin"
+          form={formId}
+          type="submit"
+          expand="block"
+        >
+          {mode === "login" ? "Login" : "Register"}
+        </IonButton>
+      </IonFooter>
     </IonPage>
   );
 }

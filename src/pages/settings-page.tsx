@@ -19,7 +19,7 @@ import {
 import { add } from "ionicons/icons";
 import useQueryState from "../hooks/use-query-state";
 import { Tables } from "../utils/types/database";
-import useSession from "../hooks/use-session";
+import { supabase } from "../utils/supabase";
 
 export type ISettingsPage = {
   dismissModal?: () => void;
@@ -29,8 +29,6 @@ export default function SettingsPage({ dismissModal }: ISettingsPage) {
   const [presentAlert] = useIonAlert();
   const [presentLoader, dismissLoader] = useIonLoading();
   const router = useIonRouter();
-
-  const logout = useSession().logout;
 
   const createCategory = useQueryState("categories").create;
   const categories = useQueryState("categories").data as Array<
@@ -52,7 +50,7 @@ export default function SettingsPage({ dismissModal }: ISettingsPage) {
               onClick={async () => {
                 presentLoader({ message: "Logging out..." });
 
-                const { error } = await logout();
+                const { error } = await supabase.auth.signOut();
 
                 dismissLoader();
 
