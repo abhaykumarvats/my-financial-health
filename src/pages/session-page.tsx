@@ -16,7 +16,6 @@ import {
   IonTitle,
   IonToolbar,
   useIonLoading,
-  useIonRouter,
   useIonToast,
 } from "@ionic/react";
 import { useForm } from "react-hook-form";
@@ -40,7 +39,6 @@ export default function SessionPage() {
     resolver: zodResolver(formSchema),
   });
 
-  const router = useIonRouter();
   const [presentLoader, dismissLoader] = useIonLoading();
   const [presentToast] = useIonToast();
 
@@ -92,7 +90,7 @@ export default function SessionPage() {
   async function login(email: string, password: string) {
     presentLoader({ message: "Logging in..." });
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -106,12 +104,6 @@ export default function SessionPage() {
         color: "danger",
         duration: 5000,
       });
-
-      return;
-    }
-
-    if (data.session) {
-      router.push("/");
     }
   }
 

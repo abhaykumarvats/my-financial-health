@@ -15,7 +15,6 @@ import {
   IonToolbar,
   useIonAlert,
   useIonLoading,
-  useIonRouter,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import useQueryState from "../hooks/use-query-state";
@@ -25,7 +24,6 @@ import { supabase } from "../utils/supabase";
 export default function SettingsPage() {
   const [presentAlert] = useIonAlert();
   const [presentLoader, dismissLoader] = useIonLoading();
-  const router = useIonRouter();
 
   const createCategory = useQueryState("categories").create;
   const categories = useQueryState("categories").data as Array<
@@ -53,12 +51,12 @@ export default function SettingsPage() {
               onClick={async () => {
                 presentLoader({ message: "Logging out..." });
 
-                const error = (await supabase.auth.signOut()).error;
+                const { error } = await supabase.auth.signOut();
 
                 dismissLoader();
 
-                if (!error) {
-                  router.push("/session");
+                if (error) {
+                  presentAlert({ header: "Error", message: error.message });
                 }
               }}
             >

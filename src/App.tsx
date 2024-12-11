@@ -6,7 +6,7 @@ import {
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Redirect, Route } from "react-router-dom";
+import { Route } from "react-router-dom";
 import ProtectedRoute from "./components/protected-route";
 import SessionPage from "./pages/session-page";
 import HomePage from "./pages/home-page";
@@ -53,13 +53,8 @@ export default function App() {
       <IonApp>
         <IonReactRouter>
           <IonRouterOutlet animated={!isPlatform("mobileweb")}>
-            <Route exact path="/">
-              <Redirect to="/home" />
-            </Route>
-
             <Route exact path="/session" component={SessionPage} />
-
-            <ProtectedRoute exact path="/home" component={HomePage} />
+            <ProtectedRoute exact path="/" component={HomePage} />
             <ProtectedRoute exact path="/settings" component={SettingsPage} />
             <ProtectedRoute
               exact
