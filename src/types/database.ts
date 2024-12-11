@@ -40,18 +40,78 @@ export type Database = {
           id: number;
           name: string;
           type: Database["public"]["Enums"]["transaction_type"];
+          user_id: string;
         };
         Insert: {
           created_at?: string;
           id?: number;
           name: string;
           type: Database["public"]["Enums"]["transaction_type"];
+          user_id?: string;
         };
         Update: {
           created_at?: string;
           id?: number;
           name?: string;
           type?: Database["public"]["Enums"]["transaction_type"];
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      insurance_accounts: {
+        Row: {
+          created_at: string;
+          id: number;
+          insurance_cover: number;
+          insurance_name: string;
+          insurance_premium: number;
+          insurance_type: Database["public"]["Enums"]["insurance_type"];
+          premium_frequency: Database["public"]["Enums"]["recurring_frequency"];
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          insurance_cover: number;
+          insurance_name: string;
+          insurance_premium: number;
+          insurance_type: Database["public"]["Enums"]["insurance_type"];
+          premium_frequency: Database["public"]["Enums"]["recurring_frequency"];
+          user_id?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          insurance_cover?: number;
+          insurance_name?: string;
+          insurance_premium?: number;
+          insurance_type?: Database["public"]["Enums"]["insurance_type"];
+          premium_frequency?: Database["public"]["Enums"]["recurring_frequency"];
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+      savings_accounts: {
+        Row: {
+          account_balance: number;
+          account_name: string;
+          created_at: string;
+          id: number;
+          user_id: string;
+        };
+        Insert: {
+          account_balance: number;
+          account_name: string;
+          created_at?: string;
+          id?: number;
+          user_id?: string;
+        };
+        Update: {
+          account_balance?: number;
+          account_name?: string;
+          created_at?: string;
+          id?: number;
+          user_id?: string;
         };
         Relationships: [];
       };
@@ -69,6 +129,7 @@ export type Database = {
             | Database["public"]["Enums"]["recurring_frequency"]
             | null;
           type: Database["public"]["Enums"]["transaction_type"];
+          user_id: string;
         };
         Insert: {
           amount: number;
@@ -83,6 +144,7 @@ export type Database = {
             | Database["public"]["Enums"]["recurring_frequency"]
             | null;
           type: Database["public"]["Enums"]["transaction_type"];
+          user_id?: string;
         };
         Update: {
           amount?: number;
@@ -97,6 +159,7 @@ export type Database = {
             | Database["public"]["Enums"]["recurring_frequency"]
             | null;
           type?: Database["public"]["Enums"]["transaction_type"];
+          user_id?: string;
         };
         Relationships: [
           {
@@ -117,6 +180,7 @@ export type Database = {
     };
     Enums: {
       expense_type: "need" | "want";
+      insurance_type: "term" | "health";
       recurring_frequency: "monthly" | "yearly";
       transaction_type: "income" | "expense";
     };

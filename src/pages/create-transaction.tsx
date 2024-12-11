@@ -20,7 +20,7 @@ import { useId } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useQueryState from "../hooks/use-query-state";
-import { Tables } from "../utils/types/database";
+import { Tables } from "../types/database";
 
 export type ICreateTransactionPage = { dismissModal?: () => void };
 

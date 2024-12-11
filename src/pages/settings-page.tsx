@@ -1,4 +1,5 @@
 import {
+  IonBackButton,
   IonButton,
   IonButtons,
   IonContent,
@@ -18,14 +19,10 @@ import {
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import useQueryState from "../hooks/use-query-state";
-import { Tables } from "../utils/types/database";
+import { Tables } from "../types/database";
 import { supabase } from "../utils/supabase";
 
-export type ISettingsPage = {
-  dismissModal?: () => void;
-};
-
-export default function SettingsPage({ dismissModal }: ISettingsPage) {
+export default function SettingsPage() {
   const [presentAlert] = useIonAlert();
   const [presentLoader, dismissLoader] = useIonLoading();
   const router = useIonRouter();
@@ -45,34 +42,39 @@ export default function SettingsPage({ dismissModal }: ISettingsPage) {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
+            <IonBackButton />
+          </IonButtons>
+
+          <IonTitle>Settings</IonTitle>
+
+          <IonButtons slot="end">
             <IonButton
               color="danger"
               onClick={async () => {
                 presentLoader({ message: "Logging out..." });
 
-                const { error } = await supabase.auth.signOut();
+                const error = (await supabase.auth.signOut()).error;
 
                 dismissLoader();
 
                 if (!error) {
-                  dismissModal?.();
-                  router.push("/");
+                  router.push("/session");
                 }
               }}
             >
               Logout
             </IonButton>
           </IonButtons>
-          <IonTitle>Settings</IonTitle>
-          {dismissModal && (
-            <IonButtons slot="end">
-              <IonButton onClick={() => dismissModal()}>Done</IonButton>
-            </IonButtons>
-          )}
         </IonToolbar>
       </IonHeader>
 
       <IonContent>
+        <IonList inset>
+          <IonItem routerLink="/settings/savings-accounts">
+            Savings Accounts
+          </IonItem>
+        </IonList>
+
         <IonListHeader>
           <IonLabel>Income Categories</IonLabel>
           <IonButton

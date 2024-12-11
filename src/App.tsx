@@ -1,15 +1,16 @@
 import {
   IonApp,
   IonRouterOutlet,
-  IonTabs,
   isPlatform,
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Redirect, Route } from "react-router-dom";
+import ProtectedRoute from "./components/protected-route";
 import SessionPage from "./pages/session-page";
 import HomePage from "./pages/home-page";
+import SettingsPage from "./pages/settings-page";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -40,7 +41,7 @@ import "@ionic/react/css/palettes/dark.class.css";
 
 /* Theme variables */
 import "./theme/variables.css";
-import ProtectedRoute from "./components/protected-route";
+import SavingsAccounts from "./pages/savings-accounts";
 
 /* Setup */
 setupIonicReact({ mode: "ios" });
@@ -51,17 +52,21 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <IonApp>
         <IonReactRouter>
-          <IonTabs>
-            <IonRouterOutlet animated={!isPlatform("mobileweb")}>
-              <Route exact path="/">
-                <Redirect to="/home" />
-              </Route>
+          <IonRouterOutlet animated={!isPlatform("mobileweb")}>
+            <Route exact path="/">
+              <Redirect to="/home" />
+            </Route>
 
-              <Route exact path="/session" component={SessionPage} />
+            <Route exact path="/session" component={SessionPage} />
 
-              <ProtectedRoute exact path="/home" component={HomePage} />
-            </IonRouterOutlet>
-          </IonTabs>
+            <ProtectedRoute exact path="/home" component={HomePage} />
+            <ProtectedRoute exact path="/settings" component={SettingsPage} />
+            <ProtectedRoute
+              exact
+              path="/settings/savings-accounts"
+              component={SavingsAccounts}
+            />
+          </IonRouterOutlet>
         </IonReactRouter>
       </IonApp>
     </QueryClientProvider>

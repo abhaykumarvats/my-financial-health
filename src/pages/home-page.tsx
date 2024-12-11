@@ -15,45 +15,34 @@ import {
   useIonModal,
 } from "@ionic/react";
 import { add, settingsOutline } from "ionicons/icons";
-import SettingsPage, { ISettingsPage } from "./settings-page";
 import useQueryState from "../hooks/use-query-state";
-import { useRef } from "react";
-import { Tables } from "../utils/types/database";
+import { Tables } from "../types/database";
 import CreateTransactionPage, {
   ICreateTransactionPage,
-} from "./create-transaction-page";
+} from "./create-transaction";
 
 export default function HomePage() {
   // Preload data
-  useQueryState("categories");
+  const categories = useQueryState("categories").data as Array<
+    Tables<"categories">
+  >;
 
   const transactions = useQueryState("transactions").data as Array<
     Tables<"transactions">
   >;
-
-  const [presentSettingsModal, dismissSettingsModal] = useIonModal(
-    SettingsPage,
-    { dismissModal: () => dismissSettingsModal() } as ISettingsPage
-  );
 
   const [presentCreateTransactionModal, dismissCreateTransactionModal] =
     useIonModal(CreateTransactionPage, {
       dismissModal: () => dismissCreateTransactionModal(),
     } as ICreateTransactionPage);
 
-  const pageRef = useRef(null);
-
   return (
-    <IonPage ref={pageRef}>
+    <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonTitle>Home</IonTitle>
           <IonButtons slot="end">
-            <IonButton
-              onClick={() =>
-                presentSettingsModal({ presentingElement: pageRef.current! })
-              }
-            >
+            <IonButton routerLink="/settings">
               <IonIcon icon={settingsOutline} />
             </IonButton>
           </IonButtons>
@@ -63,13 +52,7 @@ export default function HomePage() {
       <IonContent>
         <IonListHeader>
           <IonLabel>Ledger</IonLabel>
-          <IonButton
-            onClick={() =>
-              presentCreateTransactionModal({
-                presentingElement: pageRef.current!,
-              })
-            }
-          >
+          <IonButton onClick={() => presentCreateTransactionModal()}>
             <IonIcon slot="start" icon={add} /> Add Transaction
           </IonButton>
         </IonListHeader>
@@ -80,11 +63,15 @@ export default function HomePage() {
           </IonNote>
         ) : (
           <IonList inset>
-            {transactions.map(({ id, type, amount }) => (
-              <IonItem key={id}>
-                <IonLabel>{type}</IonLabel>
-                <IonNote>{(amount / 100).toFixed(2)}</IonNote>
-              </IonItem>
+            {transactions.map(({ id, category_id, amount }) => (
+              <>
+                <IonItem key={id}>
+                  <IonLabel>
+                    {categories.find((item) => item.id === category_id)?.name}
+                  </IonLabel>
+                  <IonNote>{(amount / 100).toFixed(2)}</IonNote>
+                </IonItem>
+              </>
             ))}
           </IonList>
         )}

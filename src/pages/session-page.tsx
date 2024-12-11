@@ -194,13 +194,8 @@ export default function SessionPage() {
         </form>
       </IonContent>
 
-      <IonFooter>
-        <IonButton
-          className="ion-margin"
-          form={formId}
-          type="submit"
-          expand="block"
-        >
+      <IonFooter className="ion-padding">
+        <IonButton form={formId} type="submit" expand="block">
           {mode === "login" ? "Login" : "Register"}
         </IonButton>
       </IonFooter>
