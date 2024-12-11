@@ -12,6 +12,8 @@ import {
   IonList,
   IonNote,
   IonPage,
+  IonSelect,
+  IonSelectOption,
   IonTitle,
   IonToolbar,
   useIonAlert,
@@ -26,12 +28,12 @@ import { supabase } from "../utils/supabase";
 import { Tables } from "../types/database";
 
 type INewAccounts = Immutable<
-  Array<Partial<Tables<"savings_accounts"> & { _id: string }>>
+  Array<Partial<Tables<"insurance_accounts"> & { _id: string }>>
 >;
 
-async function getSavingsAccounts() {
+async function getInsuranceAccounts() {
   const { error, data } = await supabase
-    .from(tableNames.savings_accounts)
+    .from(tableNames.insurance_accounts)
     .select("*");
 
   if (error) {
@@ -41,9 +43,9 @@ async function getSavingsAccounts() {
   return data;
 }
 
-async function setSavingsAccounts(data: Array<Tables<"savings_accounts">>) {
+async function setInsuranceAccounts(data: Array<Tables<"insurance_accounts">>) {
   const { error } = await supabase
-    .from(tableNames.savings_accounts)
+    .from(tableNames.insurance_accounts)
     .insert(data);
 
   if (error) {
@@ -51,23 +53,24 @@ async function setSavingsAccounts(data: Array<Tables<"savings_accounts">>) {
   }
 }
 
-export default function SavingsAccounts() {
+export default function InsuranceAccounts() {
   const queryClient = useQueryClient();
   const [presentLoader, dismissLoader] = useIonLoading();
   const [presentAlert] = useIonAlert();
+  const [newAccounts, setNewAccounts] = useImmer<INewAccounts>([]);
 
   const { data: accounts = [] } = useQuery({
-    queryKey: [tableNames.savings_accounts],
-    queryFn: getSavingsAccounts,
+    queryKey: [tableNames.insurance_accounts],
+    queryFn: getInsuranceAccounts,
   });
 
   const { mutate } = useMutation({
-    mutationFn: setSavingsAccounts,
+    mutationFn: setInsuranceAccounts,
     onSuccess: () => {
       setNewAccounts([]);
 
       queryClient.invalidateQueries({
-        queryKey: [tableNames.savings_accounts],
+        queryKey: [tableNames.insurance_accounts],
       });
     },
     onError: (error) => {
@@ -80,8 +83,6 @@ export default function SavingsAccounts() {
     onSettled: () => dismissLoader(),
   });
 
-  const [newAccounts, setNewAccounts] = useImmer<INewAccounts>([]);
-
   return (
     <IonPage>
       <IonHeader>
@@ -89,7 +90,7 @@ export default function SavingsAccounts() {
           <IonButtons>
             <IonBackButton defaultHref="/settings" />
           </IonButtons>
-          <IonTitle>Savings Accounts</IonTitle>
+          <IonTitle>Insurance Accounts</IonTitle>
         </IonToolbar>
       </IonHeader>
 
@@ -99,15 +100,33 @@ export default function SavingsAccounts() {
         ) : null}
 
         {newAccounts.map((item, index) => (
-          <IonList inset key={index}>
+          <IonList inset key={item._id}>
+            <IonItem>
+              <IonSelect
+                label="Insurance Type"
+                placeholder="Select"
+                interface="action-sheet"
+                onIonChange={(e) =>
+                  setNewAccounts((draft) => {
+                    draft[index].insurance_type = e.detail.value;
+                  })
+                }
+              >
+                <IonSelectOption value="term">Term Insurance</IonSelectOption>
+                <IonSelectOption value="health">
+                  Health Insurance
+                </IonSelectOption>
+              </IonSelect>
+            </IonItem>
+
             <IonItem>
               <IonInput
                 type="text"
-                placeholder="Account Name"
-                value={item.account_name}
+                placeholder="Insurance Name"
+                value={item.insurance_name}
                 onIonInput={(e) => {
                   setNewAccounts((draft) => {
-                    draft[index].account_name = e.target.value as string;
+                    draft[index].insurance_name = e.target.value as string;
                   });
                 }}
               />
@@ -117,11 +136,42 @@ export default function SavingsAccounts() {
               <IonInput
                 type="number"
                 inputMode="decimal"
-                placeholder="Account Balance"
-                value={(item.account_balance as number) / 100}
+                placeholder="Insurance Premium"
+                value={(item.insurance_premium as number) / 100}
                 onIonInput={(e) => {
                   setNewAccounts((draft) => {
-                    draft[index].account_balance = Number(e.target.value) * 100;
+                    draft[index].insurance_premium =
+                      Number(e.target.value) * 100;
+                  });
+                }}
+              />
+            </IonItem>
+
+            <IonItem>
+              <IonSelect
+                label="Premium Frequency"
+                placeholder="Select"
+                interface="action-sheet"
+                onIonChange={(e) =>
+                  setNewAccounts((draft) => {
+                    draft[index].premium_frequency = e.detail.value;
+                  })
+                }
+              >
+                <IonSelectOption value="monthly">Monthly</IonSelectOption>
+                <IonSelectOption value="yearly">Yearly</IonSelectOption>
+              </IonSelect>
+            </IonItem>
+
+            <IonItem>
+              <IonInput
+                type="number"
+                inputMode="decimal"
+                placeholder="Insurance Cover"
+                value={(item.insurance_cover as number) / 100}
+                onIonInput={(e) => {
+                  setNewAccounts((draft) => {
+                    draft[index].insurance_cover = Number(e.target.value) * 100;
                   });
                 }}
               />
@@ -181,10 +231,10 @@ export default function SavingsAccounts() {
 
         {accounts.length ? (
           <IonList inset>
-            {accounts.map(({ id, account_name, account_balance }) => (
+            {accounts.map(({ id, insurance_name, insurance_cover }) => (
               <IonItem key={id}>
-                <IonLabel>{account_name}</IonLabel>
-                <IonNote>{(account_balance / 100).toFixed(2)}</IonNote>
+                <IonLabel>{insurance_name}</IonLabel>
+                <IonNote>{(insurance_cover / 100).toFixed(2)}</IonNote>
               </IonItem>
             ))}
           </IonList>
@@ -199,7 +249,7 @@ export default function SavingsAccounts() {
             presentLoader({ message: "Saving..." });
             mutate(
               newAccounts.map(({ _id, ...item }) => ({ ...item })) as Array<
-                Tables<"savings_accounts">
+                Tables<"insurance_accounts">
               >
             );
           }}

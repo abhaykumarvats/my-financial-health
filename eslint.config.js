@@ -17,6 +17,10 @@ export default [
       "react/react-in-jsx-scope": "off",
       "no-console": "error",
       "no-debugger": "error",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
     },
   },
 ];

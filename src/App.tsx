@@ -11,6 +11,8 @@ import ProtectedRoute from "./components/protected-route";
 import SessionPage from "./pages/session-page";
 import HomePage from "./pages/home-page";
 import SettingsPage from "./pages/settings-page";
+import SavingsAccounts from "./pages/savings-accounts";
+import InsuranceAccounts from "./pages/insurance-accounts";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -41,7 +43,6 @@ import "@ionic/react/css/palettes/dark.class.css";
 
 /* Theme variables */
 import "./theme/variables.css";
-import SavingsAccounts from "./pages/savings-accounts";
 
 /* Setup */
 setupIonicReact({ mode: "ios" });
@@ -60,6 +61,11 @@ export default function App() {
               exact
               path="/settings/savings-accounts"
               component={SavingsAccounts}
+            />
+            <ProtectedRoute
+              exact
+              path="/settings/insurance-accounts"
+              component={InsuranceAccounts}
             />
           </IonRouterOutlet>
         </IonReactRouter>
